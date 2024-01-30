@@ -1,4 +1,6 @@
-﻿namespace ET
+﻿using UnityEditor;
+
+namespace ET
 {
     public static class ToolsEditor
     {
@@ -10,8 +12,10 @@
             const string tools = ".\\Tool.exe";
 #endif
             ShellHelper.Run($"{tools} --AppType=ExcelExporter --Console=1", "../Bin/");
+
+            AssetDatabase.Refresh();
         }
-        
+
         public static void Proto2CS()
         {
 #if UNITY_EDITOR_OSX || UNITY_EDITOR_LINUX
