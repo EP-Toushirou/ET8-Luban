@@ -58,22 +58,35 @@ namespace ET
         /// </summary>
         const string ClientServerGeneratedJsonDir = "../Config/Json/cs";
 
-        public static void Export()
+        public static async void Export()
         {
-            string shellFileExt = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "bat" : "sh";
-            Run($"GenFuncConfig.{shellFileExt}", "../Tools/Luban/");
-            Run($"GenStartConfig.{shellFileExt}", "../Tools/Luban/");
+            string shellFileExt = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)? "bat" : "sh";
+            Process configProcess = CreateProcess($"GenConfig.{shellFileExt}", "../Tools/Luban/");
 
-            // 覆盖新文件
-            CopyClientBytesToUnity();
-            CopyServerCodesToClientServerCodesInUnity();
-            CopyServerDataToClientServerData();
+            try
+            {
+                configProcess.Start();
+                await configProcess.WaitForExitAsync();
 
-            // 清除无用Meta
-            RemoveUnusedMetaFiles(UnityClientBytesDir);
-            RemoveUnusedMetaFiles(ClientGeneratedCodeDir);
-            RemoveUnusedMetaFiles(ServerGeneratedCodeDir);
-            RemoveUnusedMetaFiles(ClientServerGeneratedCodeDir);
+                // 覆盖新文件
+                CopyClientBytesToUnity();
+                CopyServerCodesToClientServerCodesInUnity();
+                CopyServerDataToClientServerData();
+
+                // 清除无用Meta
+                RemoveUnusedMetaFiles(UnityClientBytesDir);
+                RemoveUnusedMetaFiles(ClientGeneratedCodeDir);
+                RemoveUnusedMetaFiles(ServerGeneratedCodeDir);
+                RemoveUnusedMetaFiles(ClientServerGeneratedCodeDir);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+            }
+            finally
+            {
+                configProcess.Close();
+            }
         }
 
         /// <summary>
@@ -193,89 +206,25 @@ namespace ET
             }
         }
 
-        static void Run(string cmd, string workDirectory)
+        static Process CreateProcess(string cmd, string workDirectory)
         {
             Process process = new();
-            try
+            string app = "cmd.exe";
+            string arguments = "/c";
+            if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
-                string app = "cmd.exe";
-                string arguments = "/c";
-                if (!RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-                {
-                    app = "bash";
-                    arguments = "-c";
-                }
-
-                ProcessStartInfo start = new(app);
-
-                process.StartInfo = start;
-                start.Arguments = arguments + " \"" + cmd + "\"";
-                start.CreateNoWindow = true;
-                start.ErrorDialog = true;
-                start.UseShellExecute = false;
-                start.WorkingDirectory = workDirectory;
-
-                if (start.UseShellExecute)
-                {
-                    start.RedirectStandardOutput = false;
-                    start.RedirectStandardError = false;
-                    start.RedirectStandardInput = false;
-                }
-                else
-                {
-                    start.RedirectStandardOutput = true;
-                    start.RedirectStandardError = true;
-                    start.RedirectStandardInput = true;
-                    start.StandardOutputEncoding = System.Text.Encoding.UTF8;
-                    start.StandardErrorEncoding = System.Text.Encoding.UTF8;
-                }
-
-                bool endOutput = false;
-                bool endError = false;
-
-                process.OutputDataReceived += (_, args) =>
-                {
-                    if (args.Data != null)
-                    {
-                        Log.Console(args.Data);
-                    }
-                    else
-                    {
-                        endOutput = true;
-                    }
-                };
-
-                process.ErrorDataReceived += (_, args) =>
-                {
-                    if (args.Data != null)
-                    {
-                        Log.Console(args.Data);
-                    }
-                    else
-                    {
-                        endError = true;
-                    }
-                };
-
-                process.Start();
-                process.BeginOutputReadLine();
-                process.BeginErrorReadLine();
-
-                while (!endOutput || !endError)
-                {
-                }
-
-                process.CancelOutputRead();
-                process.CancelErrorRead();
+                app = "bash";
+                arguments = "-c";
             }
-            catch (Exception e)
+
+            process.StartInfo = new ProcessStartInfo(app)
             {
-                Log.Console(e.ToString());
-            }
-            finally
-            {
-                process.Close();
-            }
+                Arguments = $"{arguments} \"{cmd}\"",
+                CreateNoWindow = false,
+                UseShellExecute = true,
+                WorkingDirectory = workDirectory
+            };
+            return process;
         }
     }
 }
