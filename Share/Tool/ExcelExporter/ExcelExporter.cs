@@ -58,15 +58,15 @@ namespace ET
         /// </summary>
         const string ClientServerGeneratedJsonDir = "../Config/Json/cs";
 
-        public static async void Export()
+        public static void Export()
         {
-            string shellFileExt = RuntimeInformation.IsOSPlatform(OSPlatform.Windows)? "bat" : "sh";
+            string shellFileExt = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "bat" : "sh";
             Process configProcess = CreateProcess($"GenConfig.{shellFileExt}", "../Tools/Luban/");
 
             try
             {
                 configProcess.Start();
-                await configProcess.WaitForExitAsync();
+                configProcess.WaitForExit();
 
                 // 覆盖新文件
                 CopyClientBytesToUnity();
