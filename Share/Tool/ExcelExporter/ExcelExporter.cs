@@ -60,8 +60,8 @@ namespace ET
 
         public static void Export()
         {
-            string shellFileExt = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "bat" : "sh";
-            Process configProcess = CreateProcess($"GenConfig.{shellFileExt}", "../Tools/Luban/");
+            string shellFilePath = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? ".\\GenConfig.bat" : "./GenConfig.sh";
+            Process configProcess = CreateProcess(shellFilePath, "../Tools/Luban/");
 
             try
             {
