@@ -11,6 +11,7 @@ using Luban;
 
 namespace ET
 {
+    [EnableClass]
     public sealed partial class StartSceneConfig : BeanBase
     {
         public StartSceneConfig(ByteBuf _buf)

@@ -46,6 +46,7 @@
     {{~if __bean.is_value_type~}}
     public partial struct {{__name}}
     {{~else~}}
+    [EnableClass]
     public {{class_modifier __bean}} partial class {{__name}} : {{if parent_def_type}}{{__bean.parent}}{{else}}BeanBase{{end}}
     {{~end~}}
     {

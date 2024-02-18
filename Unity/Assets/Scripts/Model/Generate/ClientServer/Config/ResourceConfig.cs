@@ -11,6 +11,7 @@ using Luban;
 
 namespace ET
 {
+    [EnableClass]
     public sealed partial class ResourceConfig : BeanBase
     {
         public ResourceConfig(ByteBuf _buf)

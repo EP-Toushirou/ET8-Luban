@@ -11,6 +11,7 @@ using Luban;
 
 namespace ET
 {
+    [EnableClass]
     public sealed partial class AIConfig : BeanBase
     {
         public AIConfig(ByteBuf _buf)

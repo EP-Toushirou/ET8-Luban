@@ -11,6 +11,7 @@ using Luban;
 
 namespace ET
 {
+    [EnableClass]
     public sealed partial class StartProcessConfig : BeanBase
     {
         public StartProcessConfig(ByteBuf _buf)
