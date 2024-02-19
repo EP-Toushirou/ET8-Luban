@@ -24,6 +24,16 @@ namespace ET
         const string ServerGeneratedCodeDir = $"{GeneratedCodeBaseDir}/Server/Config";
 
         /// <summary>
+        /// 服务端启动配置代码生成目录
+        /// </summary>
+        const string ServerStartConfigGeneratedCodeDir = $"{GeneratedCodeBaseDir}/Server/Config/StartConfig";
+
+        /// <summary>
+        /// 服务端启动配置代码meta文件临时目录
+        /// </summary>
+        const string ServerStartConfigTempMetaDir = "../Temp/ServerStartConfigTempMeta";
+
+        /// <summary>
         /// 双端配置代码生成目录
         /// </summary>
         const string ClientServerGeneratedCodeDir = $"{GeneratedCodeBaseDir}/ClientServer/Config";
@@ -60,6 +70,9 @@ namespace ET
 
         public static void Export()
         {
+            // 备份StartConfig的旧meta, 以免版本管理软件出现文件变化
+            CopyDirectoryMetaFiles(ServerStartConfigGeneratedCodeDir, ServerStartConfigTempMetaDir);
+
             string shellFilePath = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? ".\\GenConfig.bat" : "./GenConfig.sh";
             Process configProcess = CreateProcess(shellFilePath, "../Tools/Luban/");
 
@@ -72,6 +85,13 @@ namespace ET
                 CopyClientBytesToUnity();
                 CopyServerCodesToClientServerCodesInUnity();
                 CopyServerDataToClientServerData();
+
+                // 还原StartConfig的旧Meta, 并删除临时文件夹
+                CopyDirectoryMetaFiles(ServerStartConfigTempMetaDir, ServerStartConfigGeneratedCodeDir);
+                if (Directory.Exists(ServerStartConfigTempMetaDir))
+                {
+                    Directory.Delete(ServerStartConfigTempMetaDir, true);
+                }
 
                 // 清除无用Meta
                 RemoveUnusedMetaFiles(UnityClientBytesDir);
@@ -125,6 +145,45 @@ namespace ET
 
             FileHelper.CopyDirectory(ServerGeneratedBytesDir, ClientServerGeneratedBytesDir);
             FileHelper.CopyDirectory(ServerGeneratedJsonDir, ClientServerGeneratedJsonDir);
+        }
+
+        /// <summary>
+        /// 复制所有meta文件到指定目录
+        /// </summary>
+        static void CopyDirectoryMetaFiles(string srcDir, string tgtDir)
+        {
+            DirectoryInfo source = new(srcDir);
+            DirectoryInfo target = new(tgtDir);
+
+            if (target.FullName.StartsWith(source.FullName, StringComparison.CurrentCultureIgnoreCase))
+            {
+                throw new Exception("父目录不能拷贝到子目录！");
+            }
+
+            if (!source.Exists)
+            {
+                return;
+            }
+
+            if (!target.Exists)
+            {
+                target.Create();
+            }
+
+            FileInfo[] files = source.GetFiles();
+            for (int i = 0; i < files.Length; i++)
+            {
+                if (files[i].Name.EndsWith(".meta"))
+                {
+                    File.Copy(files[i].FullName, Path.Combine(target.FullName, files[i].Name), true);
+                }
+            }
+
+            DirectoryInfo[] dirs = source.GetDirectories();
+            for (int j = 0; j < dirs.Length; j++)
+            {
+                CopyDirectoryMetaFiles(dirs[j].FullName, Path.Combine(target.FullName, dirs[j].Name));
+            }
         }
 
         /// <summary>

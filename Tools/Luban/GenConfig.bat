@@ -14,6 +14,7 @@ dotnet %LUBAN_DLL% ^
     -x outputCodeDir=%WORKSPACE%\Unity\Assets\Scripts\Model\Generate\Client\Config ^
     -x bin.outputDataDir=%WORKSPACE%\Config\Excel\c ^
     -x json.outputDataDir=%WORKSPACE%\Config\Json\c ^
+    -x codeLineEndingStyle=CRLF ^
     
 
 echo ==================== FuncConfig : GenClientFinish ====================
@@ -35,6 +36,7 @@ dotnet %LUBAN_DLL% ^
     -x outputCodeDir=%WORKSPACE%\Unity\Assets\Scripts\Model\Generate\Server\Config ^
     -x bin.outputDataDir=%WORKSPACE%\Config\Excel\s ^
     -x json.outputDataDir=%WORKSPACE%\Config\Json\s ^
+    -x codeLineEndingStyle=CRLF ^
     
 
 echo ==================== FuncConfig : GenServerFinish ====================
@@ -56,6 +58,7 @@ dotnet %LUBAN_DLL% ^
     -x outputCodeDir=%WORKSPACE%\Unity\Assets\Scripts\Model\Generate\Server\Config\StartConfig ^
     -x bin.outputDataDir=%WORKSPACE%\Config\Excel\s\StartConfig\Release ^
     -x json.outputDataDir=%WORKSPACE%\Config\Json\s\StartConfig\Release ^
+    -x codeLineEndingStyle=CRLF ^
     
 
 echo ==================== StartConfig : GenReleaseFinish ====================
