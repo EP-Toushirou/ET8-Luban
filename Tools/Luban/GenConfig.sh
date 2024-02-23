@@ -54,7 +54,7 @@ dotnet $LUBAN_DLL \
     -c cs-bin \
     -d bin \
     -d json \
-    --conf $CONF_ROOT/__luban__.conf \
+    --conf $CONF_ROOT/StartConfig/__luban__.conf \
     -x outputCodeDir=$WORKSPACE/Unity/Assets/Scripts/Model/Generate/Server/Config/StartConfig \
     -x bin.outputDataDir=$WORKSPACE/Config/Excel/s/StartConfig/Release \
     -x json.outputDataDir=$WORKSPACE/Config/Json/s/StartConfig/Release \
@@ -74,7 +74,7 @@ dotnet $LUBAN_DLL \
     -t Benchmark \
     -d bin \
     -d json \
-    --conf $CONF_ROOT/__luban__.conf \
+    --conf $CONF_ROOT/StartConfig/__luban__.conf \
     -x bin.outputDataDir=$WORKSPACE/Config/Excel/s/StartConfig/Benchmark \
     -x json.outputDataDir=$WORKSPACE/Config/Json/s/StartConfig/Benchmark 
 
@@ -92,7 +92,7 @@ dotnet $LUBAN_DLL \
     -t Localhost \
     -d bin \
     -d json \
-    --conf $CONF_ROOT/__luban__.conf \
+    --conf $CONF_ROOT/StartConfig/__luban__.conf \
     -x bin.outputDataDir=$WORKSPACE/Config/Excel/s/StartConfig/Localhost \
     -x json.outputDataDir=$WORKSPACE/Config/Json/s/StartConfig/Localhost 
 
@@ -110,10 +110,14 @@ dotnet $LUBAN_DLL \
     -t RouterTest \
     -d bin \
     -d json \
-    --conf $CONF_ROOT/__luban__.conf \
+    --conf $CONF_ROOT/StartConfig/__luban__.conf \
     -x bin.outputDataDir=$WORKSPACE/Config/Excel/s/StartConfig/RouterTest \
     -x json.outputDataDir=$WORKSPACE/Config/Json/s/StartConfig/RouterTest 
 
 echo ==================== StartConfig : GenRouterTestFinish ====================
 
-read -n 1 -p "Press any key to continue..."
+if [ $? -ne 0 ]; then
+    echo "An error occurred, press any key to exit."
+    read -n 1 -s
+    exit 1
+fi
