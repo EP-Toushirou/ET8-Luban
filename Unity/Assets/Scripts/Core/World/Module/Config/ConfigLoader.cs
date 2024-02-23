@@ -1,8 +1,8 @@
-﻿using Luban;
-using System;
-using System.Collections.Concurrent;
+﻿using System;
 using System.Collections.Generic;
+#if DOTNET || UNITY_STANDALONE
 using System.Threading.Tasks;
+#endif
 
 namespace ET
 {
@@ -20,52 +20,45 @@ namespace ET
             public string ConfigName;
         }
 
-        private readonly ConcurrentDictionary<Type, ASingleton> allConfig = new();
-
         public void Awake()
         {
         }
 
         public async ETTask Reload(Type configType)
         {
-            GetOneConfigBytes singleConfig = new() { ConfigName = configType.Name };
-            ByteBuf oneConfigBytes = await EventSystem.Instance.Invoke<GetOneConfigBytes, ETTask<ByteBuf>>(singleConfig);
-
-            object category = Activator.CreateInstance(configType, oneConfigBytes);
-            ASingleton singleton = category as ASingleton;
-            this.allConfig[configType] = singleton;
-
-            World.Instance.AddSingleton(singleton);
+            GetOneConfigBytes getOneConfigBytes = new() { ConfigName = configType.Name };
+            byte[] oneConfigBytes = await EventSystem.Instance.Invoke<GetOneConfigBytes, ETTask<byte[]>>(getOneConfigBytes);
+            LoadOneConfig(configType, oneConfigBytes);
         }
 
         public async ETTask LoadAsync()
         {
-            this.allConfig.Clear();
-            Dictionary<Type, ByteBuf> configBytes = await EventSystem.Instance.Invoke<GetAllConfigBytes, ETTask<Dictionary<Type, ByteBuf>>>(new GetAllConfigBytes());
+            Dictionary<Type, byte[]> configBytes = await EventSystem.Instance.Invoke<GetAllConfigBytes, ETTask<Dictionary<Type, byte[]>>>(new GetAllConfigBytes());
 
+#if DOTNET || UNITY_STANDALONE
             using ListComponent<Task> listTasks = ListComponent<Task>.Create();
 
             foreach (Type type in configBytes.Keys)
             {
-                ByteBuf oneConfigBytes = configBytes[type];
-                Task task = Task.Run(() => LoadOneInThread(type, oneConfigBytes));
+                byte[] oneConfigBytes = configBytes[type];
+                Task task = Task.Run(() => LoadOneConfig(type, oneConfigBytes));
                 listTasks.Add(task);
             }
 
             await Task.WhenAll(listTasks.ToArray());
+#else
+            foreach (Type type in configBytes.Keys)
+            {
+                LoadOneConfig(type, configBytes[type]);
+            }
+#endif
         }
 
-        private void LoadOneInThread(Type configType, ByteBuf oneConfigBytes)
+        private static void LoadOneConfig(Type configType, byte[] oneConfigBytes)
         {
-            object category = Activator.CreateInstance(configType, oneConfigBytes);
-
-            lock (this)
-            {
-                ASingleton singleton = category as ASingleton;
-                this.allConfig[configType] = singleton;
-
-                World.Instance.AddSingleton(singleton);
-            }
+            object category = MongoHelper.Deserialize(configType, oneConfigBytes, 0, oneConfigBytes.Length);
+            ASingleton singleton = category as ASingleton;
+            World.Instance.AddSingleton(singleton);
         }
     }
 }
