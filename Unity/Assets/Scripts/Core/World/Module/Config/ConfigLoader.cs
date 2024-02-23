@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Luban;
+using System;
 using System.Collections.Generic;
 #if DOTNET || UNITY_STANDALONE
 using System.Threading.Tasks;
@@ -27,20 +28,20 @@ namespace ET
         public async ETTask Reload(Type configType)
         {
             GetOneConfigBytes getOneConfigBytes = new() { ConfigName = configType.Name };
-            byte[] oneConfigBytes = await EventSystem.Instance.Invoke<GetOneConfigBytes, ETTask<byte[]>>(getOneConfigBytes);
+            ByteBuf oneConfigBytes = await EventSystem.Instance.Invoke<GetOneConfigBytes, ETTask<ByteBuf>>(getOneConfigBytes);
             LoadOneConfig(configType, oneConfigBytes);
         }
 
         public async ETTask LoadAsync()
         {
-            Dictionary<Type, byte[]> configBytes = await EventSystem.Instance.Invoke<GetAllConfigBytes, ETTask<Dictionary<Type, byte[]>>>(new GetAllConfigBytes());
+            Dictionary<Type, ByteBuf> configBytes = await EventSystem.Instance.Invoke<GetAllConfigBytes, ETTask<Dictionary<Type, ByteBuf>>>(new GetAllConfigBytes());
 
 #if DOTNET || UNITY_STANDALONE
             using ListComponent<Task> listTasks = ListComponent<Task>.Create();
 
             foreach (Type type in configBytes.Keys)
             {
-                byte[] oneConfigBytes = configBytes[type];
+                ByteBuf oneConfigBytes = configBytes[type];
                 Task task = Task.Run(() => LoadOneConfig(type, oneConfigBytes));
                 listTasks.Add(task);
             }
@@ -54,9 +55,9 @@ namespace ET
 #endif
         }
 
-        private static void LoadOneConfig(Type configType, byte[] oneConfigBytes)
+        private static void LoadOneConfig(Type configType, ByteBuf oneConfigBytes)
         {
-            object category = MongoHelper.Deserialize(configType, oneConfigBytes, 0, oneConfigBytes.Length);
+            object category = Activator.CreateInstance(configType, oneConfigBytes);
             ASingleton singleton = category as ASingleton;
             World.Instance.AddSingleton(singleton);
         }
