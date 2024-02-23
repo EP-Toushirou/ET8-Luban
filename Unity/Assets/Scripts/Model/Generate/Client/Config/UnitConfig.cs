@@ -21,6 +21,7 @@ namespace ET
             Name = _buf.ReadString();
             Position = _buf.ReadInt();
             Height = _buf.ReadInt();
+            AI = _buf.ReadInt();
 
             PostInit();
         }
@@ -51,9 +52,19 @@ namespace ET
         public readonly int Position;
 
         /// <summary>
-        ///  
+        /// 身高
         /// </summary>
         public readonly int Height;
+
+        /// <summary>
+        /// Ref测试
+        /// </summary>
+        public readonly int AI;
+
+        /// <summary>
+        /// Ref测试
+        /// </summary>
+        public AIConfig AIConfig => AIConfigCategory.Instance.GetOrDefault(AI);
 
         public const int __ID__ = -568528378;
 
@@ -67,6 +78,7 @@ namespace ET
             + "Name:" + Name + ","
             + "Position:" + Position + ","
             + "Height:" + Height + ","
+            + "AI:" + AI + ","
             + "}";
         }
 
