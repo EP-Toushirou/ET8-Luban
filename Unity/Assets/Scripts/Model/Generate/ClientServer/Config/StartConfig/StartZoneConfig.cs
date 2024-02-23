@@ -49,8 +49,8 @@ namespace ET
         /// </summary>
         public readonly string Desc;
 
-
         public const int __ID__ = -457316368;
+
         public override int GetTypeId() => __ID__;
 
         public override string ToString()

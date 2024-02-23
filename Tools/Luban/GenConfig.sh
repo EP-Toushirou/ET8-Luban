@@ -8,7 +8,7 @@ CONF_ROOT=$WORKSPACE/Unity/Assets/Config/Excel
 # Client
 dotnet $LUBAN_DLL \
     --customTemplateDir CustomTemplate \
-    -t client \
+    -t Client \
     -c cs-bin \
     -d bin \
     -d json \
@@ -29,7 +29,7 @@ fi
 # Server
 dotnet $LUBAN_DLL \
     --customTemplateDir CustomTemplate \
-    -t all \
+    -t All \
     -c cs-bin \
     -d bin \
     -d json \
@@ -50,11 +50,11 @@ fi
 # StartConfig Release
 dotnet $LUBAN_DLL \
     --customTemplateDir CustomTemplate \
-    -t all \
+    -t Release \
     -c cs-bin \
     -d bin \
     -d json \
-    --conf $CONF_ROOT/StartConfig/Release/__luban__.conf \
+    --conf $CONF_ROOT/__luban__.conf \
     -x outputCodeDir=$WORKSPACE/Unity/Assets/Scripts/Model/Generate/Server/Config/StartConfig \
     -x bin.outputDataDir=$WORKSPACE/Config/Excel/s/StartConfig/Release \
     -x json.outputDataDir=$WORKSPACE/Config/Json/s/StartConfig/Release \
@@ -71,10 +71,10 @@ fi
 # StartConfig Benchmark
 dotnet $LUBAN_DLL \
     --customTemplateDir CustomTemplate \
-    -t all \
+    -t Benchmark \
     -d bin \
     -d json \
-    --conf $CONF_ROOT/StartConfig/Benchmark/__luban__.conf \
+    --conf $CONF_ROOT/__luban__.conf \
     -x bin.outputDataDir=$WORKSPACE/Config/Excel/s/StartConfig/Benchmark \
     -x json.outputDataDir=$WORKSPACE/Config/Json/s/StartConfig/Benchmark 
 
@@ -89,10 +89,10 @@ fi
 # StartConfig Localhost
 dotnet $LUBAN_DLL \
     --customTemplateDir CustomTemplate \
-    -t all \
+    -t Localhost \
     -d bin \
     -d json \
-    --conf $CONF_ROOT/StartConfig/Localhost/__luban__.conf \
+    --conf $CONF_ROOT/__luban__.conf \
     -x bin.outputDataDir=$WORKSPACE/Config/Excel/s/StartConfig/Localhost \
     -x json.outputDataDir=$WORKSPACE/Config/Json/s/StartConfig/Localhost 
 
@@ -107,10 +107,10 @@ fi
 # StartConfig RouterTest
 dotnet $LUBAN_DLL \
     --customTemplateDir CustomTemplate \
-    -t all \
+    -t RouterTest \
     -d bin \
     -d json \
-    --conf $CONF_ROOT/StartConfig/RouterTest/__luban__.conf \
+    --conf $CONF_ROOT/__luban__.conf \
     -x bin.outputDataDir=$WORKSPACE/Config/Excel/s/StartConfig/RouterTest \
     -x json.outputDataDir=$WORKSPACE/Config/Json/s/StartConfig/RouterTest 
 

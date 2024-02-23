@@ -104,9 +104,9 @@
 
     {{~end~}}
     {{~end~}}
-
     {{~if !__bean.is_abstract_type && !__bean.is_value_type~}}
         public const int __ID__ = {{__bean.id}};
+
         public override int GetTypeId() => __ID__;
     {{~end~}}
 

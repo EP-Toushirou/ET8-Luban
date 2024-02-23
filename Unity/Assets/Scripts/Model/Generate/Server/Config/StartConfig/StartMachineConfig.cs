@@ -49,8 +49,8 @@ namespace ET
         /// </summary>
         public readonly string WatcherPort;
 
-
         public const int __ID__ = 1628109127;
+
         public override int GetTypeId() => __ID__;
 
         public override string ToString()
