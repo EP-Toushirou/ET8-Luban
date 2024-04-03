@@ -78,9 +78,9 @@
         /// </summary>
         {{~end~}}
         {{~if field.is_nullable~}}
-        public {{declaring_type_name (get_ref_type field)}} {{get_ref_name field}} => {{fieldName}} != null ? {{(get_table_name field)}}.Instance.GetOrDefault({{fieldName}}) : null;
+        public {{declaring_type_name (get_ref_type field)}} {{get_ref_name field}} => {{format_property_name __code_style field.name}} != null ? {{(get_table_name field)}}.Instance.GetOrDefault({{format_property_name __code_style field.name}}) : null;
         {{~else~}}
-        public {{declaring_type_name (get_ref_type field)}} {{get_ref_name field}} => {{(get_table_name field)}}.Instance.GetOrDefault({{fieldName}});
+        public {{declaring_type_name (get_ref_type field)}} {{get_ref_name field}} => {{(get_table_name field)}}.Instance.GetOrDefault({{format_property_name __code_style field.name}});
         {{~end~}}
         {{~end~}}
     {{~if has_index field
