@@ -35,10 +35,13 @@ namespace ET
         }
 
         public Dictionary<int, StartZoneConfig> DataMap => _dataMap;
+
         public List<StartZoneConfig> DataList => _dataList;
 
-        public StartZoneConfig GetOrDefault(int key) => _dataMap.TryGetValue(key, out var v) ? v : null;
+        public StartZoneConfig GetOrDefault(int key) => _dataMap.GetValueOrDefault(key);
+
         public StartZoneConfig Get(int key) => _dataMap[key];
+
         public StartZoneConfig this[int key] => _dataMap[key];
 
         partial void PostInit();

@@ -35,10 +35,13 @@ namespace ET
         }
 
         public Dictionary<int, UnitConfig> DataMap => _dataMap;
+
         public List<UnitConfig> DataList => _dataList;
 
-        public UnitConfig GetOrDefault(int key) => _dataMap.TryGetValue(key, out var v) ? v : null;
+        public UnitConfig GetOrDefault(int key) => _dataMap.GetValueOrDefault(key);
+
         public UnitConfig Get(int key) => _dataMap[key];
+
         public UnitConfig this[int key] => _dataMap[key];
 
         partial void PostInit();

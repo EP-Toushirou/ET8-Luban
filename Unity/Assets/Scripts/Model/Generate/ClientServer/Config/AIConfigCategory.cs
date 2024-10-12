@@ -35,10 +35,13 @@ namespace ET
         }
 
         public Dictionary<int, AIConfig> DataMap => _dataMap;
+
         public List<AIConfig> DataList => _dataList;
 
-        public AIConfig GetOrDefault(int key) => _dataMap.TryGetValue(key, out var v) ? v : null;
+        public AIConfig GetOrDefault(int key) => _dataMap.GetValueOrDefault(key);
+
         public AIConfig Get(int key) => _dataMap[key];
+
         public AIConfig this[int key] => _dataMap[key];
 
         partial void PostInit();

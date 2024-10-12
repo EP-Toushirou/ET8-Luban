@@ -35,10 +35,13 @@ namespace ET
         }
 
         public Dictionary<int, StartSceneConfig> DataMap => _dataMap;
+
         public List<StartSceneConfig> DataList => _dataList;
 
-        public StartSceneConfig GetOrDefault(int key) => _dataMap.TryGetValue(key, out var v) ? v : null;
+        public StartSceneConfig GetOrDefault(int key) => _dataMap.GetValueOrDefault(key);
+
         public StartSceneConfig Get(int key) => _dataMap[key];
+
         public StartSceneConfig this[int key] => _dataMap[key];
 
         partial void PostInit();
